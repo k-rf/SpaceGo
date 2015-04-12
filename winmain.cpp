@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <crtdbg.h>
+#include <ctime>
 #include "spaceGo.h"
 
 // 関数プロトタイプ
@@ -29,9 +30,11 @@ int WINAPI WinMain(
 	int nCmdShow)
 {
 	// デバッグビルドの場合、メモリリークをチェック
-    #if defined(DEBUG) | defined(_DEBUG)
-	    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-    #endif
+#if defined(DEBUG) | defined(_DEBUG)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+	srand((unsigned)time(NULL));
 
 	MSG msg;
 

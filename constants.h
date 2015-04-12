@@ -38,6 +38,7 @@ const UCHAR DOWN_KEY  = VK_DOWN;
 // テクスチャデータ
 const char BACK_GROUND[] = "textures\\back_ground.bmp";
 const char CHARA_MAP[] = "textures\\chara_map2.bmp";
+const char OBSTACLE[] = "textures\\bullets.bmp";
 
 // ============================================================================
 // テンプレート関数

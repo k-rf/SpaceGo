@@ -21,6 +21,7 @@ SpaceGo::~SpaceGo()
 void SpaceGo::initialize(HWND hwnd)
 {
 	Game::initialize(hwnd);  // GameErrorをスロー
+	elapsedTime = 0.0f;
 
 	// 背景のテクスチャ
 	if(!spaceTexture.initialize(graphics, BACK_GROUND))
@@ -43,10 +44,51 @@ void SpaceGo::initialize(HWND hwnd)
 
 	// 宇宙船を配置
 	ship.setX(GAME_WIDTH * 0.5f - ship.getWidth() * 0.5f * ship.getScale());
-	ship.setY(GAME_HEIGHT * 0.5f - ship.getWidth() * 0.5f * ship.getScale());
+	ship.setY(GAME_HEIGHT * 0.8f - ship.getWidth() * 0.5f * ship.getScale());
 	//ship.setFrames(shipNS::SHIP_START_FRAME, shipNS::SHIP_END_FRAME);  
 	ship.setCurrentFrame(ship.getCurrentFrame());
 	ship.setFrameDelay(shipNS::SHIP_ANIMATION_DELAY);
+
+	// 障害物のテクスチャ
+	if(!obstacleTexture.initialize(graphics, OBSTACLE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing obstacle texture"));
+
+	// 障害物
+	for(int i = 0; i < 8; i++)
+	{
+		if(!obstacle1[i].initialize(this, obstacleNS::WIDTH, obstacleNS::HEIGHT, obstacleNS::TEXTURE_COLS, &obstacleTexture))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing obstacle"));
+		else
+		{
+			obstacle1[i].setCurrentFrame(4 + 29 * i);
+			obstacle1[i].setX(rand() % (int)(GAME_WIDTH - obstacle1[i].getWidth()));
+			obstacle1[i].setY((rand() % (int)(GAME_HEIGHT / 3)) - (GAME_HEIGHT / 3));
+			obstacle1[i].setCurrentFrame(obstacle1[i].getCurrentFrame());
+			obstacle1[i].setFrameDelay(obstacleNS::OBSTACLE_ANIMATION_DELAY);
+		}
+
+		if(!obstacle2[i].initialize(this, obstacleNS::WIDTH, obstacleNS::HEIGHT, obstacleNS::TEXTURE_COLS, &obstacleTexture))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing obstacle"));
+		else
+		{
+			obstacle2[i].setCurrentFrame(18 + 29 * i);
+			obstacle2[i].setX(rand() % (int)(GAME_WIDTH - obstacle2[i].getWidth()));
+			obstacle2[i].setY((rand() % (int)(GAME_HEIGHT / 3)) - (GAME_HEIGHT / 3));
+			obstacle2[i].setCurrentFrame(obstacle2[i].getCurrentFrame());
+			obstacle2[i].setFrameDelay(obstacleNS::OBSTACLE_ANIMATION_DELAY);
+		}
+
+		if(!obstacle3[i].initialize(this, obstacleNS::WIDTH, obstacleNS::HEIGHT, obstacleNS::TEXTURE_COLS, &obstacleTexture))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing obstacle"));
+		else
+		{
+			obstacle3[i].setCurrentFrame(20 + 29 * i);
+			obstacle3[i].setX(rand() % (int)(GAME_WIDTH - obstacle3[i].getWidth()));
+			obstacle3[i].setY((rand() % (int)(GAME_HEIGHT / 3)) - (GAME_HEIGHT / 3));
+			obstacle3[i].setCurrentFrame(obstacle3[i].getCurrentFrame());
+			obstacle3[i].setFrameDelay(obstacleNS::OBSTACLE_ANIMATION_DELAY);
+		}
+	}
 
 	return;
 }
@@ -56,10 +98,55 @@ void SpaceGo::initialize(HWND hwnd)
 // ==================================================================
 void SpaceGo::update()
 {
+	elapsedTime += frameTime;
 	space.setFrameDelay(space.getFrameDelay() + 0.01f);
 	space.setY(space.getY() + frameTime * space.getFrameDelay());
-	
+
 	ship.update(frameTime);
+	if(elapsedTime >= 0 && elapsedTime < 15)
+	{
+		for(int i = 0; i < 4; i++)
+			obstacle1[i].update(frameTime, space.getFrameDelay());
+	}
+	else if(elapsedTime >= 15 && elapsedTime < 30)
+	{
+		for(int i = 0; i < 8; i++)
+			obstacle1[i].update(frameTime, space.getFrameDelay());
+	}
+	else if(elapsedTime >= 30 && elapsedTime < 45)
+	{
+		for(int i = 0; i < 8; i++)
+			obstacle1[i].update(frameTime, space.getFrameDelay());
+		for(int i = 0; i < 4; i++)
+			obstacle2[i].update(frameTime, space.getFrameDelay());
+	}
+	else if(elapsedTime >= 45 && elapsedTime < 60)
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			obstacle1[i].update(frameTime, space.getFrameDelay());
+			obstacle2[i].update(frameTime, space.getFrameDelay());
+		}
+	}
+	else if(elapsedTime >= 60 && elapsedTime < 75)
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			obstacle1[i].update(frameTime, space.getFrameDelay());
+			obstacle2[i].update(frameTime, space.getFrameDelay());
+		}
+		for(int i = 0; i < 4; i++)
+			obstacle3[i].update(frameTime, space.getFrameDelay());
+	}
+	else if(elapsedTime >= 75)
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			obstacle1[i].update(frameTime, space.getFrameDelay());
+			obstacle2[i].update(frameTime, space.getFrameDelay());
+			obstacle3[i].update(frameTime, space.getFrameDelay());
+		}
+	}
 }
 
 // ==================================================================
@@ -84,7 +171,7 @@ void SpaceGo::render()
 		y = 0;
 
 	graphics->spriteBegin();  // スプライトの描画を開始
-	
+
 	space.draw();
 	if(space.getY() + space.getHeight() < GAME_HEIGHT)
 	{
@@ -98,8 +185,16 @@ void SpaceGo::render()
 		space.draw();
 		space.setY(y);
 	}
-	
+
 	ship.draw();
+
+	for(int i = 0; i < 8; i++)
+	{
+		obstacle1[i].draw();
+		obstacle2[i].draw();
+		obstacle3[i].draw();
+	}
+
 	graphics->spriteEnd();    // スプライトの描画を終了
 }
 
@@ -112,6 +207,8 @@ void SpaceGo::releaseAll()
 {
 	spaceTexture.onLostDevice();
 	shipTexture.onLostDevice();
+	obstacleTexture.onLostDevice();
+
 	Game::releaseAll();
 	return;
 }
@@ -124,6 +221,8 @@ void SpaceGo::resetAll()
 {
 	spaceTexture.onResetDevice();
 	shipTexture.onResetDevice();
+	obstacleTexture.onResetDevice();
+
 	Game::resetAll();
 	return;
 }

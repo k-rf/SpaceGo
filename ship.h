@@ -27,6 +27,8 @@ public:
 	// コンストラクタ
 	Ship();
 
+	~Ship() {}
+
 	void update(float frameTime);
 };
 
