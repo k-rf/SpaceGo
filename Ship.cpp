@@ -17,7 +17,7 @@ Ship::Ship() : Entity()
 	startFrame = shipNS::SHIP_START_FRAME;
 	endFrame = shipNS::SHIP_END_FRAME;
 	currentFrame = startFrame + 2;
-	radius = shipNS::WIDTH / 2.0;
+	radius = 0.1f;  // ìñÇΩÇËîªíËÇè¨Ç≥Ç≠
 	collisionType = entityNS::CIRCLE;
 }
 

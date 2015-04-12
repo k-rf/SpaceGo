@@ -18,13 +18,16 @@ class SpaceGo : public Game
 	TextureManager shipTexture;
 	TextureManager spaceTexture;
 	TextureManager obstacleTexture;
+	TextureManager numberTexture[10];
 	Ship ship;
 	Image space;
+	Image number[10];
 	Obstacle obstacle1[8];
 	Obstacle obstacle2[8];
 	Obstacle obstacle3[8];
-
+	
 	float elapsedTime;
+	int score;
 
 public:
 	// コンストラクタ

@@ -23,6 +23,7 @@ void SpaceGo::initialize(HWND hwnd)
 	Game::initialize(hwnd);  // GameErrorをスロー
 	elapsedTime = 0.0f;
 
+
 	// 背景のテクスチャ
 	if(!spaceTexture.initialize(graphics, BACK_GROUND))
 		throw(GameError(gameErrorNS::WARNING, "Error initializing space texture"));
@@ -33,6 +34,7 @@ void SpaceGo::initialize(HWND hwnd)
 
 	space.setX(GAME_WIDTH * 0.5f - space.getWidth() * 0.5f * space.getScale());
 	space.setFrameDelay(30);
+
 
 	// 宇宙船のテクスチャ
 	if(!shipTexture.initialize(graphics, CHARA_MAP))
@@ -45,9 +47,9 @@ void SpaceGo::initialize(HWND hwnd)
 	// 宇宙船を配置
 	ship.setX(GAME_WIDTH * 0.5f - ship.getWidth() * 0.5f * ship.getScale());
 	ship.setY(GAME_HEIGHT * 0.8f - ship.getWidth() * 0.5f * ship.getScale());
-	//ship.setFrames(shipNS::SHIP_START_FRAME, shipNS::SHIP_END_FRAME);  
 	ship.setCurrentFrame(ship.getCurrentFrame());
 	ship.setFrameDelay(shipNS::SHIP_ANIMATION_DELAY);
+
 
 	// 障害物のテクスチャ
 	if(!obstacleTexture.initialize(graphics, OBSTACLE))
@@ -90,6 +92,21 @@ void SpaceGo::initialize(HWND hwnd)
 		}
 	}
 
+
+	// 数字のテクスチャ
+	for(int i = 0; i < 10; i++)
+	{
+		if(!numberTexture[i].initialize(graphics, NUMBER[i]))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing number texture"));
+	}
+
+	// 数字
+	for(int i = 0; i < 10; i++)
+	{
+		if(!number[i].initialize(graphics, 128, 128, 10, &numberTexture[i]))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing number"));
+	}
+
 	return;
 }
 
@@ -99,6 +116,8 @@ void SpaceGo::initialize(HWND hwnd)
 void SpaceGo::update()
 {
 	elapsedTime += frameTime;
+	score += (elapsedTime * 1.2);
+
 	space.setFrameDelay(space.getFrameDelay() + 0.01f);
 	space.setY(space.getY() + frameTime * space.getFrameDelay());
 
@@ -159,7 +178,25 @@ void SpaceGo::ai()
 // 衝突を処理
 // ==================================================================
 void SpaceGo::collisions()
-{}
+{
+	VECTOR2 collisionVector;
+
+	for(int i = 0; i < 8; i++)
+	{
+		if(ship.collidesWith(obstacle1[i], collisionVector) ||
+			ship.collidesWith(obstacle2[i], collisionVector) ||
+			ship.collidesWith(obstacle3[i], collisionVector))
+		{
+			ship.setX(ship.getX());
+			ship.setY(ship.getY());
+			ship.setCurrentFrame(21);
+			MessageBox(hwnd, "自機は大破しました。\nゲームを終了します。", "Exit", MB_OK);
+			PostQuitMessage(0);
+			return;
+		}
+	}
+	
+}
 
 // ==================================================================
 // ゲームアイテムをレンダー
@@ -194,6 +231,23 @@ void SpaceGo::render()
 		obstacle2[i].draw();
 		obstacle3[i].draw();
 	}
+
+	// スコアの表示
+	int tmp = score;
+	int num;
+	int count = 0;
+	while(tmp > 0)
+	{
+		num = tmp % 10;
+		number[num].setX(GAME_WIDTH - (36 * count) );
+		number[num].draw();
+		count++;
+		tmp /= 10;
+	}
+	
+	
+		
+	
 
 	graphics->spriteEnd();    // スプライトの描画を終了
 }

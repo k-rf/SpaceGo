@@ -16,8 +16,8 @@
 const char CLASS_NAME[] = "Space Go";
 const char APP_TITLE[] = "Space Go";
 const bool FULLSCREEN = false;
-const UINT GAME_WIDTH = 360;
-const UINT GAME_HEIGHT = 640;
+const UINT GAME_WIDTH = 360 * 1.2;
+const UINT GAME_HEIGHT = 640 * 1.2;
 const double PI = 3.14159265;
 
 // フレーム
@@ -39,6 +39,18 @@ const UCHAR DOWN_KEY  = VK_DOWN;
 const char BACK_GROUND[] = "textures\\back_ground.bmp";
 const char CHARA_MAP[] = "textures\\chara_map2.bmp";
 const char OBSTACLE[] = "textures\\bullets.bmp";
+const char NUMBER[10][13] = {
+	"number\\0.png",
+	"number\\1.png",
+	"number\\2.png",
+	"number\\3.png",
+	"number\\4.png",
+	"number\\5.png",
+	"number\\6.png",
+	"number\\7.png",
+	"number\\8.png",
+	"number\\9.png",
+};
 
 // ============================================================================
 // テンプレート関数
