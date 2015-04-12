@@ -6,6 +6,7 @@
 #include "game.h"
 #include "textureManager.h"
 #include "image.h"
+#include "ship.h"
 
 // ==================================================================
 // このクラスはゲームエンジンのコア
@@ -13,8 +14,10 @@
 class SpaceGo : public Game
 {
 	// ゲームアイテム
-	TextureManager ballTexture;
-	Image ball;
+	TextureManager shipTexture;
+	TextureManager spaceTexture;
+	Ship ship;
+	Image space;
 
 public:
 	// コンストラクタ

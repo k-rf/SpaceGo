@@ -13,11 +13,12 @@
 // ============================================================================
 
 // ウィンドウ
-const char CLASS_NAME[] = "Block Break";
-const char APP_TITLE[] = "Block Break";
+const char CLASS_NAME[] = "Space Go";
+const char APP_TITLE[] = "Space Go";
 const bool FULLSCREEN = false;
-const UINT GAME_WIDTH = 300;
-const UINT GAME_HEIGHT = 600;
+const UINT GAME_WIDTH = 360;
+const UINT GAME_HEIGHT = 640;
+const double PI = 3.14159265;
 
 // フレーム
 const float FRAME_RATE = 200.0f;
@@ -26,21 +27,17 @@ const float MIN_FRAME_TIME = 1.0f / FRAME_RATE;
 const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;
 
 // キー
-const UCHAR ESC_KEY = VK_ESCAPE;
-const UCHAR ALT_KEY = VK_MENU;
+const UCHAR ESC_KEY   = VK_ESCAPE;
+const UCHAR ALT_KEY   = VK_MENU;
 const UCHAR ENTER_KEY = VK_RETURN;
-const UCHAR LEFT_KEY = VK_LEFT;
+const UCHAR LEFT_KEY  = VK_LEFT;
 const UCHAR RIGHT_KEY = VK_RIGHT;
-const UCHAR UP_KEY = VK_UP;
-const UCHAR DOWN_KEY = VK_DOWN;
+const UCHAR UP_KEY    = VK_UP;
+const UCHAR DOWN_KEY  = VK_DOWN;
 
 // テクスチャデータ
-const char BALL_IMAGE[] = "pictures\\ball2.png";
-
-const double PI = 3.14159265;
-const float GRAVITY = 700.0f;  // 重力加速度（1秒あたりのピクセル数）
-const float BALL_SPEED = 200.0f;  // ボールの速度（1秒あたりのピクセル数）
-
+const char BACK_GROUND[] = "textures\\back_ground.bmp";
+const char CHARA_MAP[] = "textures\\chara_map2.bmp";
 
 // ============================================================================
 // テンプレート関数

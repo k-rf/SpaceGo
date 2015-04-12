@@ -121,7 +121,7 @@ public:
 	virtual void setFrameDelay(float d) { frameDelay = d; }
 
 	// アニメーションの開始フレームと終了フレームを設定
-	virtual void setframes(int s, int e) { startFrame = s; endFrame = e; }
+	virtual void setFrames(int s, int e) { startFrame = s; endFrame = e; }
 
 	// アニメーションの現在のフレームを設定
 	virtual void setCurrentFrame(int c);
@@ -163,16 +163,10 @@ public:
 	virtual void draw(SpriteData sd, COLOR_ARGB color);
 
 	// 画像を水平方向に反転（鏡）
-	virtual void flipHorizontal(bool flip)
-	{
-		spriteData.flipHorizontal = flip;
-	}
+	virtual void flipHorizontal(bool flip) { spriteData.flipHorizontal = flip; }
 
 	// 画像を垂直方向に反転
-	virtual void flipVertical(bool flip)
-	{
-		spriteData.flipVertical = flip;
-	}
+	virtual void flipVertical(bool flip) { spriteData.flipVertical = flip; }
 
 	// アニメーションの更新
 	virtual void update(float frameTime);

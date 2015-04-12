@@ -140,25 +140,12 @@ void Image::draw(SpriteData sd, COLOR_ARGB color)
 // ============================================================================
 void Image::update(float frameTime)
 {
-	if(endFrame - startFrame > 0)
+
+	animTimer += frameTime;
+	if(animTimer > frameDelay)
 	{
-		animTimer += frameTime;
-		if(animTimer > frameDelay)
-		{
-			animTimer -= frameDelay;
-			currentFrame++;
-			if(currentFrame < startFrame || currentFrame > endFrame)
-			{
-				if(loop == true)
-					currentFrame = startFrame;
-				else
-				{
-					currentFrame = endFrame;
-					animComplete = true;
-				}
-			}
-			setRect();
-		}
+		animTimer -= frameDelay;
+		setRect();
 	}
 }
 
@@ -184,7 +171,7 @@ inline void Image::setRect()
 	spriteData.rect.left = (currentFrame % cols) * spriteData.width;
 	// 右端　+ 1
 	spriteData.rect.right = spriteData.rect.left + spriteData.width;
-	spriteData.rect.top = (currentFrame % cols) * spriteData.height;
+	spriteData.rect.top = (currentFrame / cols) * spriteData.height;
 	// 下端 + 1
 	spriteData.rect.bottom = spriteData.rect.top + spriteData.height;
 }

@@ -22,20 +22,31 @@ void SpaceGo::initialize(HWND hwnd)
 {
 	Game::initialize(hwnd);  // GameErrorをスロー
 
-	// ボールのテクスチャ
-	if(!ballTexture.initialize(graphics, BALL_IMAGE))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing ball texture"));
+	// 背景のテクスチャ
+	if(!spaceTexture.initialize(graphics, BACK_GROUND))
+		throw(GameError(gameErrorNS::WARNING, "Error initializing space texture"));
 
-	// ボール
-	if(!ball.initialize(graphics, 0, 0, 0, &ballTexture))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing ball"));
+	// 背景
+	if(!space.initialize(graphics, 0, 0, 0, &spaceTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing space"));
 
-	// ボールを配置
-	ball.setX(GAME_WIDTH * 0.5f - ball.getWidth() * 0.5f * ball.getScale());
-	ball.setY(GAME_HEIGHT * 0.5f - ball.getWidth() * 0.5f * ball.getScale());
-	ball.setframes(0, 3);
-	ball.setCurrentFrame(0);
-	ball.setFrameDelay(0.2f);
+	space.setX(GAME_WIDTH * 0.5f - space.getWidth() * 0.5f * space.getScale());
+	space.setFrameDelay(30);
+
+	// 宇宙船のテクスチャ
+	if(!shipTexture.initialize(graphics, CHARA_MAP))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing ship texture"));
+
+	// 宇宙船
+	if(!ship.initialize(this, shipNS::WIDTH, shipNS::HEIGHT, shipNS::TEXTURE_COLS, &shipTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing ship"));
+
+	// 宇宙船を配置
+	ship.setX(GAME_WIDTH * 0.5f - ship.getWidth() * 0.5f * ship.getScale());
+	ship.setY(GAME_HEIGHT * 0.5f - ship.getWidth() * 0.5f * ship.getScale());
+	//ship.setFrames(shipNS::SHIP_START_FRAME, shipNS::SHIP_END_FRAME);  
+	ship.setCurrentFrame(ship.getCurrentFrame());
+	ship.setFrameDelay(shipNS::SHIP_ANIMATION_DELAY);
 
 	return;
 }
@@ -45,32 +56,10 @@ void SpaceGo::initialize(HWND hwnd)
 // ==================================================================
 void SpaceGo::update()
 {
-	static float t;
-	t += frameTime;
-
-	ball.setY(t * t * GRAVITY / 2);
-	ball.setRadians(10 * t);
-	if(ball.getY() > GAME_HEIGHT - ball.getHeight() * ball.getScale())
-	{
-		ball.setY((float)-ball.getHeight());
-		t = 0;
-	}
-
-	if(input->isKeyDown(LEFT_KEY))
-	{
-		ball.setX(ball.getX() - frameTime * BALL_SPEED);
-		if(ball.getX() < -ball.getWidth() * ball.getScale())
-			ball.setX((float)GAME_WIDTH);
-	}
-
-	if(input->isKeyDown(RIGHT_KEY))
-	{
-		ball.setX(ball.getX() + frameTime * BALL_SPEED);
-		if(ball.getX() > GAME_WIDTH)
-			ball.setX((float)-ball.getWidth() * ball.getScale());
-	}
-
-	ball.update(frameTime);
+	space.setFrameDelay(space.getFrameDelay() + 0.01f);
+	space.setY(space.getY() + frameTime * space.getFrameDelay());
+	
+	ship.update(frameTime);
 }
 
 // ==================================================================
@@ -90,8 +79,27 @@ void SpaceGo::collisions()
 // ==================================================================
 void SpaceGo::render()
 {
+	float y = space.getY();
+	if(y > space.getHeight())
+		y = 0;
+
 	graphics->spriteBegin();  // スプライトの描画を開始
-	ball.draw();
+	
+	space.draw();
+	if(space.getY() + space.getHeight() < GAME_HEIGHT)
+	{
+		space.setY(space.getY() + space.getHeight());
+		space.draw();
+		space.setY(y);
+	}
+	if(space.getY() > 0)
+	{
+		space.setY(space.getY() - space.getHeight());
+		space.draw();
+		space.setY(y);
+	}
+	
+	ship.draw();
 	graphics->spriteEnd();    // スプライトの描画を終了
 }
 
@@ -102,7 +110,8 @@ void SpaceGo::render()
 // ==================================================================
 void SpaceGo::releaseAll()
 {
-	ballTexture.onLostDevice();
+	spaceTexture.onLostDevice();
+	shipTexture.onLostDevice();
 	Game::releaseAll();
 	return;
 }
@@ -113,7 +122,8 @@ void SpaceGo::releaseAll()
 // ==================================================================
 void SpaceGo::resetAll()
 {
-	ballTexture.onResetDevice();
+	spaceTexture.onResetDevice();
+	shipTexture.onResetDevice();
 	Game::resetAll();
 	return;
 }
